@@ -1,0 +1,30 @@
+# Standalone deploy for the Frontend server. No database service here —
+# Frontend has zero direct DB/Redis/Mongo access. BACKEND_URL in .env
+# points at Backend's own dedicated server.
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      # nginx runs in a separate container/filesystem — share public/
+      # (built CSS/JS/fonts) so it can serve static assets directly
+      # instead of 404ing. Re-synced from this container's real public/
+      # on every boot (see docker/entrypoint.sh).
+      - public_shared:/var/www/html/public-shared
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - public_shared:/var/www/html/public-shared:ro
+
+volumes:
+  public_shared:

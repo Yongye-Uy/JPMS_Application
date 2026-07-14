@@ -1,0 +1,28 @@
+# Standalone deploy for the API server. No database service here at all —
+# API is a stateless gateway; CENTRAL_SERVICE_URL in .env points at
+# Central-Service's own dedicated server.
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      # nginx runs in a separate container/filesystem — share public/ so
+      # it can serve static assets directly (see docker/entrypoint.sh).
+      - public_shared:/var/www/html/public-shared
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "8002:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - public_shared:/var/www/html/public-shared:ro
+
+volumes:
+  public_shared:
