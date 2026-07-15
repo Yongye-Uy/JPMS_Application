@@ -14,6 +14,9 @@ class IssueManagement extends Component
     public array $issues = [];
     public string $search = '';
     public string $statusFilter = '';
+    public int $page = 1;
+    public int $lastPage = 1;
+    public int $total = 0;
 
     public function mount(BackendClient $backend): void
     {
@@ -22,17 +25,41 @@ class IssueManagement extends Component
 
     public function updatedSearch(BackendClient $backend): void
     {
+        $this->page = 1;
         $this->load($backend);
     }
 
     public function updatedStatusFilter(BackendClient $backend): void
     {
+        $this->page = 1;
+        $this->load($backend);
+    }
+
+    public function nextPage(BackendClient $backend): void
+    {
+        if ($this->page < $this->lastPage) {
+            $this->page++;
+            $this->load($backend);
+        }
+    }
+
+    public function prevPage(BackendClient $backend): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->load($backend);
+        }
+    }
+
+    public function gotoPage(BackendClient $backend, int $p): void
+    {
+        $this->page = $p;
         $this->load($backend);
     }
 
     private function load(BackendClient $backend): void
     {
-        $query = ['per_page' => 25];
+        $query = ['per_page' => 25, 'page' => $this->page];
 
         if ($this->search !== '') {
             $query['q'] = $this->search;
@@ -42,7 +69,11 @@ class IssueManagement extends Component
         }
 
         $response = $backend->get('/issues', $query);
-        $this->issues = $response->successful() ? ($response->json('data') ?? []) : [];
+        $json = $response->successful() ? $response->json() : [];
+
+        $this->issues    = $json['data'] ?? [];
+        $this->lastPage  = $json['last_page'] ?? 1;
+        $this->total     = $json['total'] ?? count($this->issues);
     }
 
     public function render()

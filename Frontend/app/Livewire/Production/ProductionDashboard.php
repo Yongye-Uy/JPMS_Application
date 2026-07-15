@@ -14,6 +14,9 @@ class ProductionDashboard extends Component
     public string $search = '';
     public array $unassigned = [];
     public array $inDraftIssues = [];
+    public int $page = 1;
+    public int $lastPage = 1;
+    public int $total = 0;
 
     public function mount(BackendClient $backend): void
     {
@@ -22,18 +25,45 @@ class ProductionDashboard extends Component
 
     public function updatedSearch(BackendClient $backend): void
     {
+        $this->page = 1;
+        $this->loadData($backend);
+    }
+
+    public function nextPage(BackendClient $backend): void
+    {
+        if ($this->page < $this->lastPage) {
+            $this->page++;
+            $this->loadData($backend);
+        }
+    }
+
+    public function prevPage(BackendClient $backend): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->loadData($backend);
+        }
+    }
+
+    public function gotoPage(BackendClient $backend, int $p): void
+    {
+        $this->page = $p;
         $this->loadData($backend);
     }
 
     public function loadData(BackendClient $backend): void
     {
-        $query = ['status' => 'Accepted', 'per_page' => 25];
+        $query = ['status' => 'Accepted', 'per_page' => 25, 'page' => $this->page];
         if ($this->search !== '') {
             $query['q'] = $this->search;
         }
 
         $accepted = $backend->get('/manuscripts', $query);
-        $manuscripts = $accepted->successful() ? ($accepted->json('data') ?? []) : [];
+        $json = $accepted->successful() ? $accepted->json() : [];
+        $manuscripts = $json['data'] ?? [];
+
+        $this->lastPage = $json['last_page'] ?? 1;
+        $this->total    = $json['total'] ?? count($manuscripts);
 
         $manuscriptIds = array_column($manuscripts, 'id');
         $articleByManuscript = collect([]);
