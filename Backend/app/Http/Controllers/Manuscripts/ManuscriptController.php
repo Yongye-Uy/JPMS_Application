@@ -72,6 +72,25 @@ class ManuscriptController extends Controller
     {
         $user = Auth::guard('remote-sanctum')->user();
 
+        $manuscriptResponse = $this->api->get("/manuscripts/{$id}");
+        if (! $manuscriptResponse->successful()) {
+            return response()->json($manuscriptResponse->json(), $manuscriptResponse->status());
+        }
+        $manuscriptData = $manuscriptResponse->json();
+
+        // Enforce that only the primary author or an accepted co-author can upload files.
+        $isAuthor = (int) ($manuscriptData['author_id'] ?? null) === $user->id;
+        $isCoAuthor = collect($manuscriptData['authors'] ?? [])->contains(fn ($a) => (int) $a['user_id'] === $user->id);
+
+        if (! $isAuthor && ! $isCoAuthor) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
+        // Enforce that files can only be uploaded in Draft or Revision Required status.
+        if (! in_array($manuscriptData['status'] ?? null, ['Draft', 'Revision Required'], true)) {
+            return response()->json(['message' => 'Files can only be uploaded while the manuscript is in Draft or Revision Required status.'], 422);
+        }
+
         $request->validate([
             'response_note' => 'nullable|string',
             'main_file' => 'required|file|mimes:pdf',
