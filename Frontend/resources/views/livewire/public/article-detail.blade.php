@@ -52,8 +52,36 @@
                     <a href="{{ route('auth.login') }}" class="btn-primary btn-sm">Log in to download</a>
                 @endif
 
-                <button type="button" x-data="" @click="navigator.clipboard.writeText(@js($citation)); $el.innerText='Copied!'; $wire.trackCitation()"
-                    class="btn-outline btn-sm">Copy Citation</button>
+                <button type="button"
+                    x-data="{ copied: false }"
+                    @click="
+                        (async () => {
+                            const text = @js($citation);
+                            try {
+                                if (navigator.clipboard && window.isSecureContext) {
+                                    await navigator.clipboard.writeText(text);
+                                } else {
+                                    const ta = document.createElement('textarea');
+                                    ta.value = text;
+                                    ta.style.position = 'fixed';
+                                    ta.style.opacity = '0';
+                                    document.body.appendChild(ta);
+                                    ta.focus();
+                                    ta.select();
+                                    document.execCommand('copy');
+                                    document.body.removeChild(ta);
+                                }
+                                copied = true;
+                                setTimeout(() => copied = false, 2000);
+                                $wire.trackCitation();
+                            } catch (e) {
+                                console.error('Copy failed', e);
+                            }
+                        })()
+                    "
+                    class="btn-outline btn-sm">
+                    <span x-text="copied ? 'Copied!' : 'Copy Citation'">Copy Citation</span>
+                </button>
             </div>
 
             <p class="text-xs text-muted-foreground mt-3 italic">{{ $citation }}</p>
