@@ -235,7 +235,15 @@
                     <h2 class="font-medium mb-3">Version History</h2>
                     @if ($setMainMessage) <div class="alert-success mb-2">{{ $setMainMessage }}</div> @endif
                     @if ($setMainError) <div class="alert-error mb-2">{{ $setMainError }}</div> @endif
-                    <table class="w-full text-sm">
+                    <table class="w-full text-sm table-fixed">
+                        <colgroup>
+                            <col class="w-16" />
+                            <col class="w-2/5" />
+                            <col class="w-28" />
+                            <col class="w-32" />
+                            <col class="w-28" />
+                            <col class="w-36" />
+                        </colgroup>
                         <thead>
                             <tr class="text-left text-xs text-muted-foreground border-b">
                                 <th class="p-2 font-medium">Version</th>
@@ -255,7 +263,11 @@
                                 @endphp
                                 <tr class="border-b last:border-0">
                                     <td class="p-2">v{{ $version['version_number'] }}</td>
-                                    <td class="p-2">{{ $mainFile['original_filename'] ?? '—' }}</td>
+                                    <td class="p-2 max-w-0">
+                                        <div class="truncate" title="{{ $mainFile['original_filename'] ?? '—' }}">
+                                            {{ $mainFile['original_filename'] ?? '—' }}
+                                        </div>
+                                    </td>
                                     <td class="p-2">{{ $version['uploaded_by']['full_name'] ?? 'Unknown' }}</td>
                                     <td class="p-2">{{ \Illuminate\Support\Carbon::parse($version['uploaded_at'])->format('M j, Y g:ia') }}</td>
                                     <td class="p-2 italic">{{ $version['response_note'] ?? '' }}</td>
