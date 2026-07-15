@@ -235,14 +235,14 @@
                     <h2 class="font-medium mb-3">Version History</h2>
                     @if ($setMainMessage) <div class="alert-success mb-2">{{ $setMainMessage }}</div> @endif
                     @if ($setMainError) <div class="alert-error mb-2">{{ $setMainError }}</div> @endif
-                    <table class="w-full text-sm table-fixed">
+                    <table style="width:100%;font-size:0.875rem;table-layout:fixed;border-collapse:collapse;">
                         <colgroup>
-                            <col class="w-16" />
-                            <col class="w-2/5" />
-                            <col class="w-28" />
-                            <col class="w-32" />
-                            <col class="w-28" />
-                            <col class="w-36" />
+                            <col style="width:4rem;" />
+                            <col style="width:40%;" />
+                            <col style="width:7rem;" />
+                            <col style="width:8rem;" />
+                            <col style="width:7rem;" />
+                            <col style="width:9rem;" />
                         </colgroup>
                         <thead>
                             <tr class="text-left text-xs text-muted-foreground border-b">
@@ -263,8 +263,8 @@
                                 @endphp
                                 <tr class="border-b last:border-0">
                                     <td class="p-2">v{{ $version['version_number'] }}</td>
-                                    <td class="p-2 max-w-0">
-                                        <div class="truncate" title="{{ $mainFile['original_filename'] ?? '—' }}">
+                                    <td class="p-2" style="max-width:0;overflow:hidden;">
+                                        <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{{ $mainFile['original_filename'] ?? '—' }}">
                                             {{ $mainFile['original_filename'] ?? '—' }}
                                         </div>
                                     </td>
