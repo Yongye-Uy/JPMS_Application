@@ -35,7 +35,7 @@ class EditorDashboard extends Component
         $query = array_filter([
             'q'        => $this->search,
             'status'   => $this->status,
-            'per_page' => 50,
+            'per_page' => 25,
         ]);
 
         $response = $backend->get('/manuscripts', $query);

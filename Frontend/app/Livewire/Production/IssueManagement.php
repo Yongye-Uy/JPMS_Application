@@ -32,7 +32,7 @@ class IssueManagement extends Component
 
     private function load(BackendClient $backend): void
     {
-        $query = ['per_page' => 50];
+        $query = ['per_page' => 25];
 
         if ($this->search !== '') {
             $query['q'] = $this->search;

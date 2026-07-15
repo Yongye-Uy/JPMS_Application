@@ -17,7 +17,7 @@ class MySubmissions extends Component
 
     public function submissions(BackendClient $backend)
     {
-        $query = ['author_id' => AuthenticatedUser::id(), 'per_page' => 50];
+        $query = ['author_id' => AuthenticatedUser::id(), 'per_page' => 25];
         if ($this->q !== '') {
             $query['q'] = $this->q;
         }

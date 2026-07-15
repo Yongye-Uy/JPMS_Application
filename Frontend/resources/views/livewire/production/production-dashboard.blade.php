@@ -23,55 +23,46 @@
         </div>
     </div>
 
-    @if (! $loaded)
-        <div class="card p-8 text-center text-muted-foreground text-sm">
-            <svg class="mx-auto mb-3 w-8 h-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.197 5.197a7.5 7.5 0 0 0 10.606 10.606Z"/>
-            </svg>
-            Type a title above to search accepted manuscripts.
+    <div class="card" wire:loading.class="opacity-50">
+        <div class="p-4 border-b font-medium flex items-center justify-between">
+            <span>Accepted — not yet in an issue</span>
+            <span class="text-xs text-muted-foreground">{{ count($unassigned) }} result(s)</span>
         </div>
-    @else
-        <div class="card" wire:loading.class="opacity-50">
-            <div class="p-4 border-b font-medium flex items-center justify-between">
-                <span>Accepted — not yet in an issue</span>
-                <span class="text-xs text-muted-foreground">{{ count($unassigned) }} result(s)</span>
-            </div>
-            <table class="w-full text-sm">
-                <tbody>
-                    @forelse ($unassigned as $m)
-                        <tr class="border-b last:border-0">
-                            <td class="p-3">{{ $m['title'] }}</td>
-                            <td class="p-3 text-muted-foreground">{{ $m['journal']['title'] ?? '' }}</td>
-                            <td class="p-3 text-right">
-                                <a href="{{ route('production.issues') }}" class="text-primary hover:underline">Add to Issue</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td class="p-3 text-muted-foreground">None found.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+        <table class="w-full text-sm">
+            <tbody>
+                @forelse ($unassigned as $m)
+                    <tr class="border-b last:border-0">
+                        <td class="p-3">{{ $m['title'] }}</td>
+                        <td class="p-3 text-muted-foreground">{{ $m['journal']['title'] ?? '' }}</td>
+                        <td class="p-3 text-right">
+                            <a href="{{ route('production.issues') }}" class="text-primary hover:underline">Add to Issue</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td class="p-3 text-muted-foreground">None.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-        <div class="card" wire:loading.class="opacity-50">
-            <div class="p-4 border-b font-medium flex items-center justify-between">
-                <span>In a Draft Issue</span>
-                <span class="text-xs text-muted-foreground">{{ count($inDraftIssues) }} result(s)</span>
-            </div>
-            <table class="w-full text-sm">
-                <tbody>
-                    @forelse ($inDraftIssues as $row)
-                        <tr class="border-b last:border-0">
-                            <td class="p-3">{{ $row['manuscript']['title'] }}</td>
-                            <td class="p-3 text-right">
-                                <a href="{{ route('production.issues.manage', ['issueId' => $row['article']['issue_id']]) }}" class="text-primary hover:underline">Open Issue</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td class="p-3 text-muted-foreground">None found.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="card" wire:loading.class="opacity-50">
+        <div class="p-4 border-b font-medium flex items-center justify-between">
+            <span>In a Draft Issue</span>
+            <span class="text-xs text-muted-foreground">{{ count($inDraftIssues) }} result(s)</span>
         </div>
-    @endif
+        <table class="w-full text-sm">
+            <tbody>
+                @forelse ($inDraftIssues as $row)
+                    <tr class="border-b last:border-0">
+                        <td class="p-3">{{ $row['manuscript']['title'] }}</td>
+                        <td class="p-3 text-right">
+                            <a href="{{ route('production.issues.manage', ['issueId' => $row['article']['issue_id']]) }}" class="text-primary hover:underline">Open Issue</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td class="p-3 text-muted-foreground">None.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>

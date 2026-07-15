@@ -14,26 +14,20 @@ class ProductionDashboard extends Component
     public string $search = '';
     public array $unassigned = [];
     public array $inDraftIssues = [];
-    public bool $loaded = false;
 
-    /**
-     * Don't load anything on mount — the page starts empty and the user
-     * triggers a load by typing in the search box. This prevents the 502
-     * caused by fetching hundreds of records on every page visit.
-     */
-    public function mount(): void
+    public function mount(BackendClient $backend): void
     {
-        // intentionally empty
+        $this->loadData($backend);
     }
 
-    public function updatedSearch(): void
+    public function updatedSearch(BackendClient $backend): void
     {
-        $this->loadData(app(BackendClient::class));
+        $this->loadData($backend);
     }
 
     public function loadData(BackendClient $backend): void
     {
-        $query = ['status' => 'Accepted', 'per_page' => 30];
+        $query = ['status' => 'Accepted', 'per_page' => 25];
         if ($this->search !== '') {
             $query['q'] = $this->search;
         }
@@ -41,15 +35,13 @@ class ProductionDashboard extends Component
         $accepted = $backend->get('/manuscripts', $query);
         $manuscripts = $accepted->successful() ? ($accepted->json('data') ?? []) : [];
 
-        // Only fetch articles for the manuscripts we just retrieved — avoids
-        // a full-table scan. We collect manuscript IDs and filter server-side.
         $manuscriptIds = array_column($manuscripts, 'id');
         $articleByManuscript = collect([]);
 
         if (! empty($manuscriptIds)) {
             $articles = $backend->get('/articles', [
                 'include_unpublished' => 1,
-                'per_page' => 30,
+                'per_page' => 25,
                 'manuscript_ids' => implode(',', $manuscriptIds),
             ]);
             $articleByManuscript = collect($articles->successful() ? ($articles->json('data') ?? []) : [])
@@ -67,8 +59,6 @@ class ProductionDashboard extends Component
                 $this->inDraftIssues[] = ['manuscript' => $m, 'article' => $article];
             }
         }
-
-        $this->loaded = true;
     }
 
     public function render()

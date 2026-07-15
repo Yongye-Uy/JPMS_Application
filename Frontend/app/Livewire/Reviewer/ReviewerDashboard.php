@@ -15,7 +15,7 @@ class ReviewerDashboard extends Component
 
     public function mount(BackendClient $backend)
     {
-        $response = $backend->get('/review-invitations', ['per_page' => 50]);
+        $response = $backend->get('/review-invitations', ['per_page' => 25]);
         $this->invitations = $response->successful() ? ($response->json('data') ?? []) : [];
     }
 

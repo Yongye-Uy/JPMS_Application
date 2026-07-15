@@ -40,7 +40,7 @@ class ManageIssue extends Component
         }
         $this->issue = $response->json();
 
-        $accepted = $backend->get('/manuscripts', ['status' => 'Accepted', 'per_page' => 50]);
+        $accepted = $backend->get('/manuscripts', ['status' => 'Accepted', 'per_page' => 25]);
         $manuscripts = $accepted->successful() ? ($accepted->json('data') ?? []) : [];
         $alreadyIn = collect($this->issue['articles'] ?? [])->pluck('manuscript_id')->all();
         $this->availableManuscripts = array_values(array_filter($manuscripts, fn ($m) => ! in_array($m['id'], $alreadyIn)));
