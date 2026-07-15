@@ -35,7 +35,10 @@ class IssueController extends Controller
             'publication_date' => 'nullable|date',
         ]);
 
-        if (! $user->hasRole('Admin') && ! $this->roleChecker->hasRole($user, 'Editor', $data['journal_id'])) {
+        $isEditorOrAdmin = $user->hasRole('Admin')
+            || $this->roleChecker->hasRole($user, 'Editor', $data['journal_id'])
+            || in_array('Editor', $user->roleNames(), true);
+        if (! $isEditorOrAdmin) {
             return response()->json(['message' => 'Forbidden.'], 403);
         }
 
@@ -59,7 +62,10 @@ class IssueController extends Controller
         if (! $issue->successful()) {
             return response()->json($issue->json(), $issue->status());
         }
-        if (! $user->hasRole('Admin') && ! $this->roleChecker->hasRole($user, 'Editor', $issue->json('journal_id'))) {
+        $isEditorOrAdmin = $user->hasRole('Admin')
+            || $this->roleChecker->hasRole($user, 'Editor', $issue->json('journal_id'))
+            || in_array('Editor', $user->roleNames(), true);
+        if (! $isEditorOrAdmin) {
             return response()->json(['message' => 'Forbidden.'], 403);
         }
 
@@ -77,7 +83,10 @@ class IssueController extends Controller
         if (! $issue->successful()) {
             return response()->json($issue->json(), $issue->status());
         }
-        if (! $user->hasRole('Admin') && ! $this->roleChecker->hasRole($user, 'Editor', $issue->json('journal_id'))) {
+        $isEditorOrAdmin = $user->hasRole('Admin')
+            || $this->roleChecker->hasRole($user, 'Editor', $issue->json('journal_id'))
+            || in_array('Editor', $user->roleNames(), true);
+        if (! $isEditorOrAdmin) {
             return response()->json(['message' => 'Forbidden.'], 403);
         }
 

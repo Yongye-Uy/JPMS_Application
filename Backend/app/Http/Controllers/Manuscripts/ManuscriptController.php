@@ -139,10 +139,12 @@ class ManuscriptController extends Controller
             ->header('Content-Type', $download->header('Content-Type') ?: 'application/pdf');
     }
 
-    /** Broad read access: primary author, any accepted co-author, an assigned editor, a non-declined reviewer, or Admin. */
+    /** Broad read access: primary author, any accepted co-author, any Editor/Admin, an assigned editor, a non-declined reviewer. */
     private function canAccessManuscriptFiles(array $manuscript, $user): bool
     {
-        if (in_array('Admin', $user->roleNames(), true)) {
+        // Any Editor or Admin role holder may read manuscript files — matches the
+        // same pattern used in ReviewController::downloadFile().
+        if (array_intersect(['Editor', 'Admin'], $user->roleNames()) !== []) {
             return true;
         }
         if ((int) ($manuscript['author_id'] ?? null) === $user->id) {

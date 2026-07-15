@@ -12,6 +12,7 @@ use Livewire\Component;
 class EditorDashboard extends Component
 {
     public string $search = '';
+    public string $status = '';
     public array $manuscripts = [];
 
     public function mount(BackendClient $backend)
@@ -24,11 +25,28 @@ class EditorDashboard extends Component
         $this->load($backend);
     }
 
+    public function updatedStatus(BackendClient $backend)
+    {
+        $this->load($backend);
+    }
+
     private function load(BackendClient $backend): void
     {
-        $response = $backend->get('/manuscripts', array_filter(['q' => $this->search, 'per_page' => 100]));
+        $query = array_filter([
+            'q'        => $this->search,
+            'status'   => $this->status,
+            'per_page' => 50,
+        ]);
+
+        $response = $backend->get('/manuscripts', $query);
         $all = $response->successful() ? ($response->json('data') ?? []) : [];
-        $this->manuscripts = array_values(array_filter($all, fn ($m) => ! in_array($m['status'], ['Draft', 'Withdrawn'])));
+
+        // When no status filter is active, hide Draft & Withdrawn (irrelevant to editors)
+        if ($this->status === '') {
+            $all = array_values(array_filter($all, fn ($m) => ! in_array($m['status'], ['Draft', 'Withdrawn'])));
+        }
+
+        $this->manuscripts = $all;
     }
 
     public function render()

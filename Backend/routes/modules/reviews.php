@@ -25,11 +25,17 @@ Route::middleware('role:Reviewer')->group(function () {
     Route::post('review-invitations/{invitationId}/reviews', [ReviewController::class, 'store']);
 });
 
+
 // Either party may list/view invitations and submitted reviews — ownership
 // is enforced inside the controller (a Reviewer only ever sees their own).
 Route::middleware('role:Reviewer,Editor,Admin')->group(function () {
     Route::get('review-invitations', [ReviewInvitationController::class, 'index']);
     Route::get('review-invitations/{id}', [ReviewInvitationController::class, 'show']);
     Route::get('reviews/{id}', [ReviewController::class, 'show']);
-    Route::get('reviews/{reviewId}/files/{fileId}/download', [ReviewController::class, 'downloadFile']);
 });
+
+// File download is accessible to Authors too (e.g. author viewing reviewer's
+// annotated PDF on their submission). Authorization is enforced inside
+// ReviewController::downloadFile() — it checks isOwner, isEditorish, isAuthor.
+Route::get('reviews/{reviewId}/files/{fileId}/download', [ReviewController::class, 'downloadFile']);
+

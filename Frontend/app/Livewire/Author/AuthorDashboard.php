@@ -21,7 +21,7 @@ class AuthorDashboard extends Component
 
     public function mount(BackendClient $backend)
     {
-        $response = $backend->get('/manuscripts', ['author_id' => AuthenticatedUser::id(), 'per_page' => 100]);
+        $response = $backend->get('/manuscripts', ['author_id' => AuthenticatedUser::id(), 'per_page' => 50]);
         $manuscripts = $response->successful() ? ($response->json('data') ?? []) : [];
 
         foreach ($manuscripts as $m) {
