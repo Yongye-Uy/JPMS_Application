@@ -45,6 +45,13 @@ class AuditLog extends Component
         }
     }
 
+    public function gotoPage(int $page): void
+    {
+        $this->page = $page;
+        $backend = app(BackendClient::class);
+        $this->load($backend);
+    }
+
     public function render()
     {
         return view('livewire.admin.audit-log');

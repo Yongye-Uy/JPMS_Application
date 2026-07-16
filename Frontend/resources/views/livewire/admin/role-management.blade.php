@@ -67,10 +67,18 @@
             @endforeach
         </div>
     </div>
-    @php $totalPages = $page + (count($users) === $perPage ? 1 : 0); @endphp
-<div class="flex justify-center space-x-2 my-4">
-    @for ($i = 1; $i <= $totalPages; $i++)
-        <button wire:click="goToPage({{ $i }})" {{ $i === $page ? 'disabled' : '' }} class="px-3 py-1 bg-gray-200 {{ $i === $page ? 'font-bold' : '' }}">{{ $i }}</button>
-    @endfor
-</div>
+    @php $lastPage = $page + (count($users) < $perPage ? 0 : 1); @endphp
+    <div class="flex items-center justify-between my-4">
+        <button type="button" wire:click="previousPage" wire:loading.attr="disabled"
+            @disabled($page <= 1) class="btn-outline btn-sm">Previous</button>
+        <div class="flex items-center gap-1">
+            @foreach (range(max(1, $page - 2), min($lastPage, $page + 2)) as $p)
+                <button type="button" wire:click="goToPage({{ $p }})" wire:loading.attr="disabled"
+                    @disabled($p === $page)
+                    class="btn-sm {{ $p === $page ? 'btn-primary' : 'btn-outline' }}">{{ $p }}</button>
+            @endforeach
+        </div>
+        <button type="button" wire:click="nextPage" wire:loading.attr="disabled"
+            @disabled($page >= $lastPage) class="btn-outline btn-sm">Next</button>
+    </div>
 </div>

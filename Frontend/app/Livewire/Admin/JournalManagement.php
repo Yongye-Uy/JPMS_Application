@@ -131,6 +131,13 @@ class JournalManagement extends Component
         }
     }
 
+    public function gotoPage(int $page): void
+    {
+        $this->page = $page;
+        $backend = app(BackendClient::class);
+        $this->load($backend);
+    }
+
     public function render()
 
     {
