@@ -69,5 +69,9 @@
                 @endif
             </div>
         @endforeach
+    <div class="flex justify-between items-center mt-4">
+        <button wire:click="previousPage" @if($page <= 1) disabled @endif class="btn-sm">Previous</button>
+        <span>Page {{ $page }}</span>
+        <button wire:click="nextPage" class="btn-sm">Next</button>
     </div>
 </div>

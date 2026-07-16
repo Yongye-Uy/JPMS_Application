@@ -14,6 +14,8 @@ class UserManagement extends Component
 {
     public string $search = '';
     public array $users = [];
+    public int $perPage = 25;
+    public int $page = 1;
 
     public bool $showCreate = false;
     public string $new_email = '';
@@ -51,7 +53,7 @@ class UserManagement extends Component
 
     private function load(BackendClient $backend): void
     {
-        $response = $backend->get('/users', array_filter(['search' => $this->search, 'per_page' => 100]));
+        $response = $backend->get('/users', array_filter(['search' => $this->search, 'per_page' => $this->perPage, 'page' => $this->page]));
         $this->users = $response->successful() ? ($response->json('data') ?? []) : [];
     }
 
@@ -135,8 +137,23 @@ class UserManagement extends Component
             $this->roleToggleNonce++;
         }
 
+                $this->load($backend);
+    }
+
+    public function previousPage(BackendClient $backend): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->load($backend);
+        }
+    }
+
+    public function nextPage(BackendClient $backend): void
+    {
+        $this->page++;
         $this->load($backend);
     }
+
 
     public function render()
     {

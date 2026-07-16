@@ -12,6 +12,8 @@ use Livewire\Component;
 class ManuscriptManagement extends Component
 {
     public array $manuscripts = [];
+    public int $perPage = 25;
+    public int $page = 1;
     public string $status = 'Published';
     public string $search = '';
     public string $actionError = '';
@@ -36,11 +38,28 @@ class ManuscriptManagement extends Component
         $params = array_filter([
             'status' => $this->status ?: null,
             'q' => $this->search ?: null,
-            'per_page' => 100,
+            'per_page' => $this->perPage,
+            'page' => $this->page,
         ]);
 
         $response = $backend->get('/manuscripts', $params);
         $this->manuscripts = $response->successful() ? ($response->json('data') ?? []) : [];
+    }
+
+    public function previousPage(BackendClient $backend): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->load($backend);
+        }
+    }
+
+    public function nextPage(BackendClient $backend): void
+    {
+        if (count($this->manuscripts) === $this->perPage) {
+            $this->page++;
+            $this->load($backend);
+        }
     }
 
     public function archive(int $id, BackendClient $backend)

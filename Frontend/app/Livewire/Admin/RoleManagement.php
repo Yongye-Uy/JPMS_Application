@@ -16,6 +16,8 @@ class RoleManagement extends Component
 
     /** Last-fetched server snapshot: array<int, array{id, full_name, email, roles: array<array{id, role_name}>}> */
     public array $users = [];
+    public int $perPage = 25;
+    public int $page = 1;
 
     /** Staged/local edits only: array<userId, array<roleName, bool>>. Never sent to Backend until save(). */
     public array $pendingRoles = [];
@@ -50,7 +52,7 @@ class RoleManagement extends Component
 
     private function loadUsers(BackendClient $backend): void
     {
-        $response = $backend->get('/users', ['per_page' => 100]);
+        $response = $backend->get('/users', ['per_page' => $this->perPage, 'page' => $this->page]);
         $this->users = $response->successful() ? ($response->json('data') ?? []) : [];
         $this->syncPendingFromUsers();
     }
@@ -163,6 +165,22 @@ class RoleManagement extends Component
                 AuthenticatedUser::store($freshSelf);
             }
             $this->ownRolesChanged = true;
+        }
+    }
+
+    public function previousPage(BackendClient $backend): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->loadUsers($backend);
+        }
+    }
+
+    public function nextPage(BackendClient $backend): void
+    {
+        if (count($this->users) === $this->perPage) {
+            $this->page++;
+            $this->loadUsers($backend);
         }
     }
 

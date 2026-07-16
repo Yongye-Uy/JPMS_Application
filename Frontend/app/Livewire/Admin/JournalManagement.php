@@ -12,6 +12,8 @@ use Livewire\Component;
 class JournalManagement extends Component
 {
     public array $journals = [];
+    public int $perPage = 25;
+    public int $page = 1;
     public array $editors = [];
 
     public bool $showCreate = false;
@@ -32,13 +34,13 @@ class JournalManagement extends Component
     {
         $this->load($backend);
 
-        $response = $backend->get('/users', ['role' => 'Editor', 'per_page' => 100]);
+        $response = $backend->get('/users', ['role' => 'Editor', 'per_page' => $this->perPage, 'page' => $this->page]);
         $this->editors = $response->successful() ? ($response->json('data') ?? []) : [];
     }
 
     private function load(BackendClient $backend): void
     {
-        $response = $backend->get('/journals', ['include_archived' => 1, 'per_page' => 100]);
+        $response = $backend->get('/journals', ['include_archived' => 1, 'per_page' => $this->perPage, 'page' => $this->page]);
         $this->journals = $response->successful() ? ($response->json('data') ?? []) : [];
     }
 
@@ -113,7 +115,24 @@ class JournalManagement extends Component
         $this->load($backend);
     }
 
+    public function previousPage(BackendClient $backend): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->load($backend);
+        }
+    }
+
+    public function nextPage(BackendClient $backend): void
+    {
+        if (count($this->journals) === $this->perPage) {
+            $this->page++;
+            $this->load($backend);
+        }
+    }
+
     public function render()
+
     {
         return view('livewire.admin.journal-management');
     }

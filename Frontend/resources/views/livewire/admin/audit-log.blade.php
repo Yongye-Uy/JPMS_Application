@@ -29,4 +29,9 @@
             </tbody>
         </table>
     </div>
+    <div class="flex justify-between items-center my-4">
+        <button wire:click="previousPage" {{ $page <= 1 ? 'disabled' : '' }} class="px-3 py-1 bg-gray-200 rounded-l">Prev</button>
+        <span>Page {{ $page }}</span>
+        <button wire:click="nextPage" {{ count($entries) < $perPage ? 'disabled' : '' }} class="px-3 py-1 bg-gray-200 rounded-r">Next</button>
+    </div>
 </div>

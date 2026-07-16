@@ -12,11 +12,37 @@ use Livewire\Component;
 class AuditLog extends Component
 {
     public array $entries = [];
+    public int $perPage = 25;
+    public int $page = 1;
 
     public function mount(BackendClient $backend)
     {
-        $response = $backend->get('/audit-log', ['per_page' => 100]);
+        $this->load($backend);
+    }
+
+    private function load(BackendClient $backend): void
+    {
+        $response = $backend->get('/audit-log', [
+            'per_page' => $this->perPage,
+            'page' => $this->page,
+        ]);
         $this->entries = $response->successful() ? ($response->json('data') ?? []) : [];
+    }
+
+    public function previousPage(BackendClient $backend): void
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->load($backend);
+        }
+    }
+
+    public function nextPage(BackendClient $backend): void
+    {
+        if (count($this->entries) === $this->perPage) {
+            $this->page++;
+            $this->load($backend);
+        }
     }
 
     public function render()
