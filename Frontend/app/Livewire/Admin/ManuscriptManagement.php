@@ -54,13 +54,7 @@ class ManuscriptManagement extends Component
         }
     }
 
-    public function nextPage(BackendClient $backend): void
-    {
-        if (count($this->manuscripts) === $this->perPage) {
-            $this->page++;
-            $this->load($backend);
-        }
-    }
+
 
     public function archive(int $id, BackendClient $backend)
     {

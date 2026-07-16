@@ -137,7 +137,7 @@ class UserManagement extends Component
             $this->roleToggleNonce++;
         }
 
-                $this->load($backend);
+        $this->load($backend);
     }
 
     public function previousPage(BackendClient $backend): void
@@ -150,8 +150,10 @@ class UserManagement extends Component
 
     public function nextPage(BackendClient $backend): void
     {
-        $this->page++;
-        $this->load($backend);
+        if (count($this->users) === $this->perPage) {
+            $this->page++;
+            $this->load($backend);
+        }
     }
 
 

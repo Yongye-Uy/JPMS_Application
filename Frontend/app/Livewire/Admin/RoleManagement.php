@@ -184,8 +184,10 @@ class RoleManagement extends Component
         }
     }
 
-    public function render()
+    public function goToPage(int $page): void
     {
-        return view('livewire.admin.role-management');
+        $this->page = $page;
+        $backend = app(BackendClient::class);
+        $this->loadUsers($backend);
     }
 }
