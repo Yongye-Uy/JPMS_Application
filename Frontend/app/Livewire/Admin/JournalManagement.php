@@ -131,7 +131,7 @@ class JournalManagement extends Component
         }
     }
 
-    public function gotoPage(int $page): void
+    public function goToPage(int $page): void
     {
         $this->page = $page;
         $backend = app(BackendClient::class);
@@ -139,7 +139,6 @@ class JournalManagement extends Component
     }
 
     public function render()
-
     {
         return view('livewire.admin.journal-management');
     }

@@ -86,7 +86,7 @@
             @disabled($page <= 1) class="btn-outline btn-sm">Previous</button>
         <div class="flex items-center gap-1">
             @foreach (range(max(1, $page - 2), min($lastPage, $page + 2)) as $p)
-                <button type="button" wire:click="gotoPage({{ $p }})" wire:loading.attr="disabled"
+                <button type="button" wire:click="goToPage({{ $p }})" wire:loading.attr="disabled"
                     @disabled($p === $page)
                     class="btn-sm {{ $p === $page ? 'btn-primary' : 'btn-outline' }}">{{ $p }}</button>
             @endforeach

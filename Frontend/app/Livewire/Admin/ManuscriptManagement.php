@@ -62,7 +62,7 @@ class ManuscriptManagement extends Component
         }
     }
 
-    public function gotoPage(int $page): void
+    public function goToPage(int $page): void
     {
         $this->page = $page;
         $backend = app(BackendClient::class);
