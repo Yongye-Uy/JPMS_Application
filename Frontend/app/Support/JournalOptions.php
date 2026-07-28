@@ -21,6 +21,7 @@ class JournalOptions
 {
     /** @return array<int, array{id:int, title:string}> */
     public static function forSelect(BackendClient $backend): array
+    {
         return \Illuminate\Support\Facades\Cache::remember('journal_options', 600, function () use ($backend) {
             $response = $backend->get('/journals', ['per_page' => 100]);
 
