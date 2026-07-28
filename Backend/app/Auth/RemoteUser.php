@@ -41,6 +41,11 @@ class RemoteUser implements Authenticatable
     /** True if the user holds $role either globally or scoped to $journalId. */
     public function hasRole(string $role, ?int $journalId = null): bool
     {
+        // Per user request: Editors should be able to manage all manuscripts/issues globally
+        if ($role === 'Editor' && in_array('Editor', $this->roleNames(), true)) {
+            return true;
+        }
+
         foreach ($this->roles as $grant) {
             if ($grant['role_name'] !== $role) {
                 continue;
@@ -48,7 +53,7 @@ class RemoteUser implements Authenticatable
             if ($grant['journal_id'] === null) {
                 return true; // global grant (e.g. Admin)
             }
-            if ($journalId !== null && $grant['journal_id'] === $journalId) {
+            if ($journalId !== null && (int) $grant['journal_id'] === (int) $journalId) {
                 return true;
             }
         }

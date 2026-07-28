@@ -4,7 +4,6 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CoAuthorInvitationController;
-use App\Http\Controllers\Api\EditorAssignmentController;
 use App\Http\Controllers\Api\EditorialDecisionController;
 use App\Http\Controllers\Api\IssueController;
 use App\Http\Controllers\Api\JournalController;
@@ -69,7 +68,6 @@ Route::prefix('v1')->middleware(['backend.token'])->group(function () {
     Route::get('reviews/{id}', [ReviewController::class, 'show']);
     Route::get('reviews/{reviewId}/files/{fileId}/download', [ReviewController::class, 'downloadFile']);
 
-    Route::post('manuscripts/{manuscriptId}/editor-assignments', [EditorAssignmentController::class, 'store']);
     Route::post('manuscripts/{manuscriptId}/decisions', [EditorialDecisionController::class, 'store']);
     Route::get('manuscripts/{manuscriptId}/messages', [MessageController::class, 'index']);
     Route::post('manuscripts/{manuscriptId}/messages', [MessageController::class, 'store']);

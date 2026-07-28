@@ -12,6 +12,9 @@
         @if ($publishError)
             <div class="alert-error">{{ $publishError }}</div>
         @endif
+        @if ($removeError)
+            <div class="alert-error">{{ $removeError }}</div>
+        @endif
 
         <div class="card">
             <div class="p-4 border-b font-medium flex items-center justify-between">

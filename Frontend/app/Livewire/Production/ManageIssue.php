@@ -72,9 +72,18 @@ class ManageIssue extends Component
         $this->load($backend);
     }
 
+    public string $removeError = '';
+
     public function removeArticle(int $articleId, BackendClient $backend)
     {
-        $backend->delete("/articles/{$articleId}");
+        $this->removeError = '';
+        $response = $backend->delete("/articles/{$articleId}");
+        
+        if (! $response->successful()) {
+            $this->removeError = $response->json('message') ?? 'Could not remove article.';
+            return;
+        }
+
         $this->load($backend);
     }
 

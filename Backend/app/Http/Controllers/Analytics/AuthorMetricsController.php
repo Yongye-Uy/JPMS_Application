@@ -30,7 +30,7 @@ class AuthorMetricsController extends Controller
         }
 
         $articles = collect($response->json('data') ?? $response->json())
-            ->filter(fn ($article) => ($article['manuscript']['author_id'] ?? null) === $user->id)
+            ->filter(fn ($article) => (int) ($article['manuscript']['author_id'] ?? null) === $user->id)
             ->values();
 
         return response()->json(['articles' => $articles]);

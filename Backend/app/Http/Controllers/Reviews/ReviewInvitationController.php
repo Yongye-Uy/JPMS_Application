@@ -47,7 +47,7 @@ class ReviewInvitationController extends Controller
         }
 
         $invitation = $response->json();
-        $isOwner = ($invitation['reviewer_id'] ?? null) === $user->id;
+        $isOwner = (int) ($invitation['reviewer_id'] ?? null) === $user->id;
         $isEditorish = (bool) array_intersect(['Editor', 'Admin'], $user->roleNames());
 
         if (! $isOwner && ! $isEditorish) {

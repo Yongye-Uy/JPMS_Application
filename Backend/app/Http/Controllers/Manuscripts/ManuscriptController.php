@@ -192,7 +192,7 @@ class ManuscriptController extends Controller
             'invited_author_id' => 'required|integer',
         ]);
 
-        if ($data['invited_author_id'] === $user->id) {
+        if ((int) $data['invited_author_id'] === $user->id) {
             return response()->json(['message' => 'You cannot invite yourself as a co-author.'], 422);
         }
 

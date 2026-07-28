@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Editorial\EditorAssignmentController;
 use App\Http\Controllers\Editorial\EditorialDecisionController;
 use App\Http\Controllers\Editorial\MessageController;
 use Illuminate\Support\Facades\Route;
@@ -12,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('role:Editor,Admin')->group(function () {
-    Route::post('manuscripts/{manuscriptId}/editor-assignments', [EditorAssignmentController::class, 'store']);
 
     // Also used for desk-reject/screening decisions — same endpoint, different `decision` value.
     Route::post('manuscripts/{manuscriptId}/decisions', [EditorialDecisionController::class, 'store']);
