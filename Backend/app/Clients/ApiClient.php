@@ -25,7 +25,7 @@ class ApiClient
             $client = $client->withHeaders(['X-Actor-User-Id' => $actorId]);
         }
 
-        if (request()) {
+        if (request() && request()->ip()) {
             $client = $client->withHeaders(['X-Forwarded-For' => request()->ip()]);
         }
 
