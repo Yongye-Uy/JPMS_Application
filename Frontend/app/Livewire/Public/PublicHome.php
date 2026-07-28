@@ -6,7 +6,6 @@ use App\Clients\BackendClient;
 use App\Support\JournalOptions;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('components.layouts.root')]
@@ -14,20 +13,16 @@ use Livewire\Component;
 class PublicHome extends Component
 {
     public string $field = 'title';
-    #[Url(except: '')]
     public string $q = '';
     
-    #[Url(except: '')]
     public string $journal_id = '';
     
-    #[Url(except: '')]
     public string $year = '';
 
     public array $results = [];
     public array $journals = [];
     public bool $searched = false;
 
-    #[Url(except: 1)]
     public int $page = 1;
     
     public int $perPage = 20;
