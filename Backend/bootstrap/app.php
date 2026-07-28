@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureRole::class,
         ]);
 
+        $middleware->trustProxies(at: '*');
+
         // Pure JSON API, no "login" web route to redirect guests to.
         $middleware->redirectGuestsTo(fn () => null);
 

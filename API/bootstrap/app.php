@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'backend.token' => EnsureBackendToken::class,
         ]);
 
+        $middleware->trustProxies(at: '*');
+
         $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {

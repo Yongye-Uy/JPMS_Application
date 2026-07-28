@@ -38,6 +38,10 @@ class BackendClient
             $client = $client->withToken($token);
         }
 
+        if (request()) {
+            $client = $client->withHeaders(['X-Forwarded-For' => request()->ip()]);
+        }
+
         return $client;
     }
 
