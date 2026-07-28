@@ -73,7 +73,7 @@
             <div class="flex items-end gap-2">
                 <div>
                     <label class="block text-xs text-muted-foreground mb-1">Review deadline</label>
-                    <input type="date" wire:model="deadline" class="field text-sm">
+                    <input type="date" wire:model="deadline" min="{{ \Carbon\Carbon::tomorrow()->toDateString() }}" class="field text-sm">
                 </div>
                 <button wire:click="inviteReviewer" class="btn-primary btn-sm" @if(!$selectedReviewerId) disabled @endif>Invite</button>
             </div>

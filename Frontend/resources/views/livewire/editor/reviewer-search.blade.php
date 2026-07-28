@@ -36,7 +36,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs text-muted-foreground mb-1">Review deadline</label>
-                                <input type="date" wire:model="deadline" class="field text-sm">
+                                <input type="date" wire:model="deadline" min="{{ \Carbon\Carbon::tomorrow()->toDateString() }}" class="field text-sm">
                             </div>
                             <button wire:click="invite" class="btn-primary btn-sm">Send Invitation</button>
                         </div>
