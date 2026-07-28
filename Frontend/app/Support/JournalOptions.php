@@ -21,40 +21,41 @@ class JournalOptions
 {
     /** @return array<int, array{id:int, title:string}> */
     public static function forSelect(BackendClient $backend): array
-    {
-        $response = $backend->get('/journals', ['per_page' => 100]);
+        return \Illuminate\Support\Facades\Cache::remember('journal_options', 600, function () use ($backend) {
+            $response = $backend->get('/journals', ['per_page' => 100]);
 
-        if ($response->successful()) {
-            return collect($response->json('data') ?? [])
-                ->map(fn ($j) => ['id' => $j['id'], 'title' => $j['title']])
-                ->values()
-                ->all();
-        }
+            if ($response->successful()) {
+                return collect($response->json('data') ?? [])
+                    ->map(fn ($j) => ['id' => $j['id'], 'title' => $j['title']])
+                    ->values()
+                    ->all();
+            }
 
-        $journals = collect();
+            $journals = collect();
 
-        $issues = $backend->get('/issues', ['per_page' => 100]);
-        if ($issues->successful()) {
-            foreach ($issues->json('data') ?? [] as $issue) {
-                if (isset($issue['journal']['id'])) {
-                    $journals->put($issue['journal']['id'], [
-                        'id' => $issue['journal']['id'],
-                        'title' => $issue['journal']['title'],
-                    ]);
+            $issues = $backend->get('/issues', ['per_page' => 100]);
+            if ($issues->successful()) {
+                foreach ($issues->json('data') ?? [] as $issue) {
+                    if (isset($issue['journal']['id'])) {
+                        $journals->put($issue['journal']['id'], [
+                            'id' => $issue['journal']['id'],
+                            'title' => $issue['journal']['title'],
+                        ]);
+                    }
                 }
             }
-        }
 
-        $articles = $backend->get('/articles', ['per_page' => 100]);
-        if ($articles->successful()) {
-            foreach ($articles->json('data') ?? [] as $article) {
-                $journal = $article['issue']['journal'] ?? null;
-                if ($journal) {
-                    $journals->put($journal['id'], ['id' => $journal['id'], 'title' => $journal['title']]);
+            $articles = $backend->get('/articles', ['per_page' => 100]);
+            if ($articles->successful()) {
+                foreach ($articles->json('data') ?? [] as $article) {
+                    $journal = $article['issue']['journal'] ?? null;
+                    if ($journal) {
+                        $journals->put($journal['id'], ['id' => $journal['id'], 'title' => $journal['title']]);
+                    }
                 }
             }
-        }
 
-        return $journals->values()->all();
+            return $journals->values()->all();
+        });
     }
 }
