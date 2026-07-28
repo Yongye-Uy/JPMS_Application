@@ -28,6 +28,7 @@
                 <option value="Revision Required">Revision Required</option>
                 <option value="Accepted">Accepted</option>
                 <option value="Rejected">Rejected</option>
+                <option value="Published">Published</option>
             </select>
         </div>
     </div>
