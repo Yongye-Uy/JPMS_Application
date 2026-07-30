@@ -1,16 +1,16 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-xl font-semibold">Manuscript Management</h1>
+        <h1 class="text-xl font-semibold">Manuscript Management <span class="text-sm font-normal text-muted-foreground ml-2">({{ $total }} total)</span></h1>
     </div>
 
     <div class="card p-4 flex flex-wrap gap-3 items-end">
         <div>
             <label class="block text-xs font-medium mb-1">Search title</label>
-            <input type="text" wire:model.live.debounce.400ms="search" class="field text-sm">
+            <input type="text" wire:model="search" wire:keydown.enter="$refresh" class="field text-sm">
         </div>
         <div>
             <label class="block text-xs font-medium mb-1">Status</label>
-            <select wire:model.live="status" class="field text-sm">
+            <select wire:model="status" class="field text-sm">
                 <option value="">All</option>
                 <option value="Draft">Draft</option>
                 <option value="Submitted">Submitted</option>
@@ -23,6 +23,9 @@
                 <option value="Published">Published</option>
                 <option value="Archived">Archived</option>
             </select>
+        </div>
+        <div>
+            <button wire:click="$refresh" class="btn-primary btn-sm mb-1">Search</button>
         </div>
     </div>
 

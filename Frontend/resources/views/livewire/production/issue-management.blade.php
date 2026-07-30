@@ -9,7 +9,8 @@
         <div class="relative flex-1 min-w-0">
             <input
                 type="text"
-                wire:model.live.debounce.400ms="search"
+                wire:model="search"
+                wire:keydown.enter="$refresh"
                 placeholder="Search by journal, volume, year…"
                 class="field text-sm"
             >
@@ -21,11 +22,14 @@
             </div>
         </div>
         <div class="shrink-0 w-36">
-            <select wire:model.live="statusFilter" class="field text-sm">
+            <select wire:model="statusFilter" class="field text-sm">
                 <option value="">All Statuses</option>
                 <option value="Draft">Draft</option>
                 <option value="Published">Published</option>
             </select>
+        </div>
+        <div class="shrink-0">
+            <button wire:click="$refresh" class="btn-primary btn-sm">Search</button>
         </div>
     </div>
 

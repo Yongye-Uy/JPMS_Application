@@ -22,13 +22,18 @@
         </div>
 
         <div class="card p-6">
-            <p class="text-sm font-medium mb-3">Co-Authors</p>
-            <div class="space-y-1 text-sm">
-                @forelse ($manuscript['authors'] ?? [] as $a)
-                    <p>{{ $a['user']['full_name'] ?? '' }} @if ($a['is_corresponding']) <span class="text-xs text-muted-foreground">(corresponding)</span> @endif</p>
-                @empty
-                    <p class="text-muted-foreground">Main author only.</p>
-                @endforelse
+            <p class="text-sm font-medium mb-3">Authors</p>
+            <div class="space-y-3">
+                <div class="border-b pb-3 last:border-0 last:pb-0">
+                    <p class="font-medium text-sm">{{ $manuscript['author']['full_name'] ?? '' }} <span class="badge">Submitting Author</span></p>
+                    <p class="text-xs text-muted-foreground">{{ $manuscript['author']['email'] ?? '' }}</p>
+                </div>
+                @foreach ($manuscript['authors'] ?? [] as $coauthor)
+                    <div class="border-b pb-3 last:border-0 last:pb-0">
+                        <p class="font-medium text-sm">{{ $coauthor['user']['full_name'] ?? '' }} <span class="badge">Co-Author</span></p>
+                        <p class="text-xs text-muted-foreground">{{ $coauthor['user']['email'] ?? '' }}</p>
+                    </div>
+                @endforeach
             </div>
         </div>
 

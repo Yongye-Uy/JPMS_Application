@@ -2,15 +2,21 @@
     @php $currentUserId = \App\Support\AuthenticatedUser::id(); @endphp
 
     <div class="flex items-center justify-between">
-        <h1 class="text-xl font-semibold">Role Management</h1>
-        @if ($this->hasChanges())
-            <div class="flex gap-3">
-                <button type="button" wire:click="resetChanges" wire:loading.attr="disabled" wire:target="save"
-                    class="btn-outline btn-sm">Reset Changes</button>
-                <button type="button" wire:click="save" wire:loading.attr="disabled" wire:target="save"
-                    class="btn-primary btn-sm">Save Changes</button>
+        <h1 class="text-xl font-semibold">Role Management <span class="text-sm font-normal text-muted-foreground ml-2">({{ $total }} total)</span></h1>
+        <div class="flex gap-2 items-center">
+            <div class="flex gap-1">
+                <input type="text" wire:model="search" wire:keydown.enter="performSearch" placeholder="Search users…" class="field text-sm">
+                <button wire:click="performSearch" class="btn-primary btn-sm">Search</button>
             </div>
-        @endif
+            @if ($this->hasChanges())
+                <div class="flex gap-3">
+                    <button type="button" wire:click="resetChanges" wire:loading.attr="disabled" wire:target="save"
+                        class="btn-outline btn-sm">Reset Changes</button>
+                    <button type="button" wire:click="save" wire:loading.attr="disabled" wire:target="save"
+                        class="btn-primary btn-sm">Save Changes</button>
+                </div>
+            @endif
+        </div>
     </div>
 
     @if ($error)

@@ -22,9 +22,13 @@ class ReviewerSearch extends Component
 
     public array $manuscripts = [];
 
+    public int $page = 1;
+    public int $perPage = 20;
+    public int $total = 0;
+    public int $lastPage = 1;
+
     public function mount(BackendClient $backend)
     {
-        $this->load($backend);
         $this->loadManuscripts($backend);
     }
 
@@ -34,15 +38,54 @@ class ReviewerSearch extends Component
         $this->manuscripts = $response->successful() ? ($response->json('data') ?? []) : [];
     }
 
-    public function updatedSearch(BackendClient $backend)
+    public function performSearch(BackendClient $backend)
     {
+        $this->page = 1;
         $this->load($backend);
     }
 
     private function load(BackendClient $backend): void
     {
-        $response = $backend->get('/reviewers', array_filter(['search' => $this->search, 'per_page' => 10]));
-        $this->reviewers = $response->successful() ? ($response->json('data') ?? []) : [];
+        $cacheKey = 'reviewer_search_' . md5($this->search . '_' . $this->page);
+        
+        $response = \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($backend) {
+            $resp = $backend->get('/reviewers', array_filter(['search' => $this->search, 'per_page' => $this->perPage, 'page' => $this->page]));
+            return $resp->successful() ? $resp->json() : null;
+        });
+
+        if ($response) {
+            $this->reviewers = $response['data'] ?? [];
+            $this->total = $response['total'] ?? 0;
+            $this->lastPage = $response['last_page'] ?? 1;
+        } else {
+            $this->reviewers = [];
+            $this->total = 0;
+            $this->lastPage = 1;
+        }
+    }
+
+    public function nextPage(BackendClient $backend)
+    {
+        if ($this->page < $this->lastPage) {
+            $this->page++;
+            $this->load($backend);
+        }
+    }
+
+    public function previousPage(BackendClient $backend)
+    {
+        if ($this->page > 1) {
+            $this->page--;
+            $this->load($backend);
+        }
+    }
+
+    public function goToPage(int $page, BackendClient $backend)
+    {
+        if ($page >= 1 && $page <= $this->lastPage) {
+            $this->page = $page;
+            $this->load($backend);
+        }
     }
 
     public function startInvite(int $reviewerId)

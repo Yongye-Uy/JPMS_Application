@@ -98,6 +98,7 @@ class PublicHome extends Component
         $query = ['page' => $this->page, 'per_page' => $this->perPage];
         if ($this->q !== '') {
             $query['q'] = $this->q;
+            $query['field'] = $this->field;
         }
         if ($this->journal_id !== '') {
             $query['journal_id'] = $this->journal_id;

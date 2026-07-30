@@ -17,6 +17,7 @@ class ManuscriptManagement extends Component
     public string $status = 'Published';
     public string $search = '';
     public string $actionError = '';
+    public int $total = 0;
 
     public function mount(BackendClient $backend)
     {
@@ -43,7 +44,13 @@ class ManuscriptManagement extends Component
         ]);
 
         $response = $backend->get('/manuscripts', $params);
-        $this->manuscripts = $response->successful() ? ($response->json('data') ?? []) : [];
+        if ($response->successful()) {
+            $this->manuscripts = $response->json('data') ?? [];
+            $this->total = $response->json('total') ?? count($this->manuscripts);
+        } else {
+            $this->manuscripts = [];
+            $this->total = 0;
+        }
     }
 
     public function previousPage(BackendClient $backend): void

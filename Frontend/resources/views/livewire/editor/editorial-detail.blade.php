@@ -26,6 +26,22 @@
             <p class="text-sm text-foreground">{{ $manuscript['abstract'] }}</p>
         </div>
 
+        <div class="card p-6">
+            <p class="text-sm font-medium mb-3">Authors</p>
+            <div class="space-y-3">
+                <div class="border-b pb-3 last:border-0 last:pb-0">
+                    <p class="font-medium text-sm">{{ $manuscript['author']['full_name'] ?? '' }} <span class="badge">Submitting Author</span></p>
+                    <p class="text-xs text-muted-foreground">{{ $manuscript['author']['email'] ?? '' }}</p>
+                </div>
+                @foreach ($manuscript['authors'] ?? [] as $coauthor)
+                    <div class="border-b pb-3 last:border-0 last:pb-0">
+                        <p class="font-medium text-sm">{{ $coauthor['user']['full_name'] ?? '' }} <span class="badge">Co-Author</span></p>
+                        <p class="text-xs text-muted-foreground">{{ $coauthor['user']['email'] ?? '' }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
         @php
             $currentVersion = collect($manuscript['versions'] ?? [])->firstWhere('id', $manuscript['current_version_id'] ?? null);
             $mainFile = collect($currentVersion['files'] ?? [])->firstWhere('file_type', 'main');

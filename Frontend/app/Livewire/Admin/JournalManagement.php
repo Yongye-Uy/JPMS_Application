@@ -14,6 +14,7 @@ class JournalManagement extends Component
     public array $journals = [];
     public int $perPage = 25;
     public int $page = 1;
+    public int $total = 0;
     public array $editors = [];
 
     public bool $showCreate = false;
@@ -41,7 +42,13 @@ class JournalManagement extends Component
     private function load(BackendClient $backend): void
     {
         $response = $backend->get('/journals', ['include_archived' => 1, 'per_page' => $this->perPage, 'page' => $this->page]);
-        $this->journals = $response->successful() ? ($response->json('data') ?? []) : [];
+        if ($response->successful()) {
+            $this->journals = $response->json('data') ?? [];
+            $this->total = $response->json('total') ?? count($this->journals);
+        } else {
+            $this->journals = [];
+            $this->total = 0;
+        }
     }
 
     public function create(BackendClient $backend)

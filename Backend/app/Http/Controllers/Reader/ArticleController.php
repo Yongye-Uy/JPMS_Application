@@ -21,7 +21,7 @@ class ArticleController extends Controller
     {
         $user = Auth::guard('remote-sanctum')->user();
 
-        $query = $request->only(['q', 'journal_id', 'issue_id', 'include_unpublished', 'year', 'page', 'per_page']);
+        $query = $request->only(['q', 'field', 'journal_id', 'issue_id', 'include_unpublished', 'year', 'page', 'per_page']);
 
         if (! $this->isEditorOrAdmin($user)) {
             unset($query['include_unpublished']);

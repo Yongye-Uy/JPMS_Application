@@ -16,8 +16,11 @@ class RoleManagement extends Component
 
     /** Last-fetched server snapshot: array<int, array{id, full_name, email, roles: array<array{id, role_name}>}> */
     public array $users = [];
+    public string $search = '';
     public int $perPage = 25;
     public int $page = 1;
+
+    public int $total = 0;
 
     /** Staged/local edits only: array<userId, array<roleName, bool>>. Never sent to Backend until save(). */
     public array $pendingRoles = [];
@@ -50,10 +53,22 @@ class RoleManagement extends Component
         $this->loadUsers($backend);
     }
 
+    public function performSearch(BackendClient $backend): void
+    {
+        $this->page = 1;
+        $this->loadUsers($backend);
+    }
+
     private function loadUsers(BackendClient $backend): void
     {
-        $response = $backend->get('/users', ['per_page' => $this->perPage, 'page' => $this->page]);
-        $this->users = $response->successful() ? ($response->json('data') ?? []) : [];
+        $response = $backend->get('/users', array_filter(['search' => $this->search, 'per_page' => $this->perPage, 'page' => $this->page]));
+        if ($response->successful()) {
+            $this->users = $response->json('data') ?? [];
+            $this->total = $response->json('total') ?? count($this->users);
+        } else {
+            $this->users = [];
+            $this->total = 0;
+        }
         $this->syncPendingFromUsers();
     }
 

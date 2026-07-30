@@ -17,6 +17,18 @@ class EnsureAuthenticated
             return redirect()->route('auth.login');
         }
 
+        // Always ensure the session has the absolute latest roles/profile data.
+        // This is a fast internal call to the Backend.
+        try {
+            $backend = app(\App\Clients\BackendClient::class);
+            $response = $backend->get('/profile');
+            if ($response->successful()) {
+                AuthenticatedUser::store($response->json());
+            }
+        } catch (\Exception $e) {
+            // If backend is down, we just proceed with the cached session
+        }
+
         return $next($request);
     }
 }

@@ -5,13 +5,15 @@
     </div>
 
     {{-- Search bar (no icon) --}}
-    <div class="relative">
+    <div class="relative flex gap-2">
         <input
             type="text"
-            wire:model.live.debounce.400ms="search"
+            wire:model="search"
+            wire:keydown.enter="$refresh"
             placeholder="Search accepted manuscripts by title…"
             class="field text-sm"
         >
+        <button wire:click="$refresh" class="btn-primary btn-sm">Search</button>
         <div wire:loading wire:target="search,nextPage,prevPage,gotoPage" class="absolute right-3 top-1/2 -translate-y-1/2">
             <svg class="animate-spin h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

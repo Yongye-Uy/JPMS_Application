@@ -17,6 +17,8 @@ class UserManagement extends Component
     public int $perPage = 25;
     public int $page = 1;
 
+    public int $total = 0;
+
     public bool $showCreate = false;
     public string $new_email = '';
     public string $new_password = '';
@@ -46,15 +48,24 @@ class UserManagement extends Component
         $this->load($backend);
     }
 
-    public function updatedSearch(BackendClient $backend)
+
+
+    public function performSearch(BackendClient $backend)
     {
+        $this->page = 1;
         $this->load($backend);
     }
 
     private function load(BackendClient $backend): void
     {
         $response = $backend->get('/users', array_filter(['search' => $this->search, 'per_page' => $this->perPage, 'page' => $this->page]));
-        $this->users = $response->successful() ? ($response->json('data') ?? []) : [];
+        if ($response->successful()) {
+            $this->users = $response->json('data') ?? [];
+            $this->total = $response->json('total') ?? count($this->users);
+        } else {
+            $this->users = [];
+            $this->total = 0;
+        }
     }
 
     public function createUser(BackendClient $backend)

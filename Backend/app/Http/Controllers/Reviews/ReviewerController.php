@@ -18,7 +18,7 @@ class ReviewerController extends Controller
 
         $query = $request->query();
         $query['role'] = 'Reviewer';
-        $query['per_page'] = $query['per_page'] ?? 10;
+        $query['per_page'] = $query['per_page'] ?? 20;
         $query['exclude_id'] = $user->id;
 
         $response = $this->api->get('/users', $query);

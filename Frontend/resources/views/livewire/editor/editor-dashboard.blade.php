@@ -8,7 +8,8 @@
         <div class="relative flex-1 min-w-0">
             <input
                 type="text"
-                wire:model.live.debounce.400ms="search"
+                wire:model="search"
+                wire:keydown.enter="$refresh"
                 placeholder="Search title / abstract…"
                 class="field text-sm"
             >
@@ -20,7 +21,7 @@
             </div>
         </div>
         <div class="shrink-0 w-44">
-            <select wire:model.live="status" class="field text-sm">
+            <select wire:model="status" class="field text-sm">
                 <option value="">All Statuses</option>
                 <option value="Submitted">Submitted</option>
                 <option value="Under Review">Under Review</option>
@@ -30,6 +31,9 @@
                 <option value="Rejected">Rejected</option>
                 <option value="Published">Published</option>
             </select>
+        </div>
+        <div class="shrink-0">
+            <button wire:click="$refresh" class="btn-primary btn-sm">Search</button>
         </div>
     </div>
 

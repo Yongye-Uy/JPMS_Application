@@ -1,8 +1,11 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-xl font-semibold">User Management</h1>
+        <h1 class="text-xl font-semibold">User Management <span class="text-sm font-normal text-muted-foreground ml-2">({{ $total }} total)</span></h1>
         <div class="flex gap-2">
-            <input type="text" wire:model.live.debounce.400ms="search" placeholder="Search name/email…" class="field text-sm">
+            <div class="flex gap-1">
+                <input type="text" wire:model="search" wire:keydown.enter="performSearch" placeholder="Search name/email…" class="field text-sm">
+                <button wire:click="performSearch" class="btn-primary btn-sm">Search</button>
+            </div>
             <button wire:click="$toggle('showCreate')" class="btn-primary btn-sm">Create User</button>
         </div>
     </div>

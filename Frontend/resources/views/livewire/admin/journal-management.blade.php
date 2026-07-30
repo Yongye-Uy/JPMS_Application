@@ -1,6 +1,6 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-xl font-semibold">Journal Management</h1>
+        <h1 class="text-xl font-semibold">Journal Management <span class="text-sm font-normal text-muted-foreground ml-2">({{ $total }} total)</span></h1>
         <button wire:click="$toggle('showCreate')" class="btn-primary btn-sm">Add Journal</button>
     </div>
 

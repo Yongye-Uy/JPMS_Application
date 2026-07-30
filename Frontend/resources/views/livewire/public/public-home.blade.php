@@ -8,20 +8,19 @@
         <form wire:submit="search" class="grid grid-cols-1 md:grid-cols-5 gap-3">
             <div>
                 <label class="block text-sm font-medium mb-1">Field</label>
-                <select wire:model.live="field" class="field w-full">
+                <select wire:model="field" class="field w-full">
                     <option value="title">Title</option>
                     <option value="author">Author</option>
                     <option value="keyword">Keyword</option>
-                    <option value="abstract">Abstract</option>
                 </select>
             </div>
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium mb-1">Search term</label>
-                <input type="text" wire:model.live.debounce.400ms="q" class="field w-full" placeholder="e.g. machine learning">
+                <input type="text" wire:model="q" class="field w-full" placeholder="e.g. machine learning">
             </div>
             <div>
                 <label class="block text-sm font-medium mb-1">Journal</label>
-                <select wire:model.live="journal_id" class="field w-full">
+                <select wire:model="journal_id" class="field w-full">
                     <option value="">All journals</option>
                     @foreach ($journals as $j)
                         <option value="{{ $j['id'] }}">{{ $j['title'] }}</option>
@@ -30,7 +29,7 @@
             </div>
             <div>
                 <label class="block text-sm font-medium mb-1">Year</label>
-                <input type="text" wire:model.live.debounce.400ms="year" class="field w-full" placeholder="2026">
+                <input type="text" wire:model="year" class="field w-full" placeholder="2026">
             </div>
             <div class="md:col-span-5">
                 <button type="submit" class="btn-primary">Search</button>
