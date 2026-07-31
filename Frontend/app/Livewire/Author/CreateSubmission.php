@@ -23,6 +23,7 @@ class CreateSubmission extends Component
 
     public bool $showNewJournal = false;
     public string $new_journal_title = '';
+    public string $new_journal_scope = '';
     public string $newJournalError = '';
 
     public function mount(BackendClient $backend)
@@ -37,9 +38,15 @@ class CreateSubmission extends Component
     {
         $this->newJournalError = '';
 
-        $this->validate(['new_journal_title' => 'required|string'], [], ['new_journal_title' => 'journal title']);
+        $this->validate([
+            'new_journal_title' => 'required|string',
+            'new_journal_scope' => 'nullable|string',
+        ], [], ['new_journal_title' => 'journal title', 'new_journal_scope' => 'journal scope']);
 
-        $response = $backend->post('/journals', ['title' => $this->new_journal_title]);
+        $response = $backend->post('/journals', [
+            'title' => $this->new_journal_title,
+            'scope_description' => $this->new_journal_scope ?: null,
+        ]);
 
         if (! $response->successful()) {
             $this->newJournalError = $response->json('message') ?? 'Could not create journal.';
@@ -51,6 +58,7 @@ class CreateSubmission extends Component
         $this->journals[] = ['id' => $journal['id'], 'title' => $journal['title']];
         $this->journal_id = (string) $journal['id'];
         $this->new_journal_title = '';
+        $this->new_journal_scope = '';
         $this->showNewJournal = false;
     }
 

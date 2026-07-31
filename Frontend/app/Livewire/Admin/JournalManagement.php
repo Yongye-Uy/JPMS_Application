@@ -19,9 +19,7 @@ class JournalManagement extends Component
 
     public bool $showCreate = false;
     public string $new_title = '';
-    public string $new_issn = '';
     public string $new_scope_description = '';
-    public string $new_editor_in_chief_id = '';
     public string $createError = '';
 
     public ?int $editingJournalId = null;
@@ -57,15 +55,12 @@ class JournalManagement extends Component
 
         $this->validate([
             'new_title' => 'required|string',
-            'new_issn' => 'nullable|string',
             'new_scope_description' => 'nullable|string',
         ]);
 
         $response = $backend->post('/journals', [
             'title' => $this->new_title,
-            'issn' => $this->new_issn ?: null,
             'scope_description' => $this->new_scope_description ?: null,
-            'editor_in_chief_id' => $this->new_editor_in_chief_id !== '' ? (int) $this->new_editor_in_chief_id : null,
         ]);
 
         if (! $response->successful()) {
@@ -74,7 +69,7 @@ class JournalManagement extends Component
             return;
         }
 
-        $this->reset(['new_title', 'new_issn', 'new_scope_description', 'new_editor_in_chief_id', 'showCreate']);
+        $this->reset(['new_title', 'new_scope_description', 'showCreate']);
         $this->load($backend);
     }
 

@@ -10,14 +10,7 @@
                 <div class="alert-error">{{ $createError }}</div>
             @endif
             <input type="text" wire:model="new_title" placeholder="Title" class="w-full field text-sm">
-            <input type="text" wire:model="new_issn" placeholder="ISSN" class="w-full field text-sm">
-            <textarea wire:model="new_scope_description" placeholder="Scope description" rows="2" class="w-full field text-sm"></textarea>
-            <select wire:model="new_editor_in_chief_id" class="w-full field text-sm">
-                <option value="">No editor-in-chief</option>
-                @foreach ($editors as $e)
-                    <option value="{{ $e['id'] }}">{{ $e['full_name'] }}</option>
-                @endforeach
-            </select>
+            <textarea wire:model="new_scope_description" placeholder="Scope description" rows="3" class="w-full field text-sm"></textarea>
             <button wire:click="create" class="btn-primary btn-sm">Create</button>
         </div>
     @endif

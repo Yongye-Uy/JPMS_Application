@@ -20,6 +20,8 @@
                         @if ($newJournalError) <div class="alert-error">{{ $newJournalError }}</div> @endif
                         <input type="text" wire:model="new_journal_title" placeholder="Journal title" class="field w-full text-sm">
                         @error('new_journal_title') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
+                        <textarea wire:model="new_journal_scope" placeholder="Scope description" rows="3" class="field w-full text-sm"></textarea>
+                        @error('new_journal_scope') <p class="text-sm text-destructive">{{ $message }}</p> @enderror
                         <button type="button" wire:click="createJournal" class="btn-primary btn-sm">Create Journal</button>
                     </div>
                 @endif
