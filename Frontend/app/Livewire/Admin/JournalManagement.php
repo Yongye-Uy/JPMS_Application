@@ -70,18 +70,21 @@ class JournalManagement extends Component
         }
 
         $this->reset(['new_title', 'new_scope_description', 'showCreate']);
+        \Illuminate\Support\Facades\Cache::forget('journal_options');
         $this->load($backend);
     }
 
     public function archive(int $id, BackendClient $backend)
     {
         $backend->post("/journals/{$id}/archive");
+        \Illuminate\Support\Facades\Cache::forget('journal_options');
         $this->load($backend);
     }
 
     public function restore(int $id, BackendClient $backend)
     {
         $backend->post("/journals/{$id}/restore");
+        \Illuminate\Support\Facades\Cache::forget('journal_options');
         $this->load($backend);
     }
 
@@ -114,6 +117,7 @@ class JournalManagement extends Component
         }
 
         $this->editingJournalId = null;
+        \Illuminate\Support\Facades\Cache::forget('journal_options');
         $this->load($backend);
     }
 
