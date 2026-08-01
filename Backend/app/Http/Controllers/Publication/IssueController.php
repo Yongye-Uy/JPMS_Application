@@ -58,7 +58,7 @@ class IssueController extends Controller
             'page_end' => 'nullable|integer',
         ]);
 
-        $issue = $this->api->get("/issues/{$issueId}");
+        $issue = $this->api->get("/issues/{$issueId}", ['without_articles' => true]);
         if (! $issue->successful()) {
             return response()->json($issue->json(), $issue->status());
         }
@@ -79,7 +79,7 @@ class IssueController extends Controller
     {
         $user = Auth::guard('remote-sanctum')->user();
 
-        $issue = $this->api->get("/issues/{$id}");
+        $issue = $this->api->get("/issues/{$id}", ['without_articles' => true]);
         if (! $issue->successful()) {
             return response()->json($issue->json(), $issue->status());
         }

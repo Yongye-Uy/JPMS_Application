@@ -12,10 +12,7 @@ use Livewire\Component;
 class ManageIssue extends Component
 {
     public int $issueId;
-    public array $issue = [];
     public bool $notFound = false;
-
-    public array $availableManuscripts = [];
 
     public string $manuscript_id = '';
     public string $page_start = '';
@@ -23,32 +20,37 @@ class ManageIssue extends Component
     public string $addMessage = '';
     public string $addError = '';
     public string $publishError = '';
+    public string $removeError = '';
 
-    public function mount(int $issueId, BackendClient $backend)
+    public function mount(int $issueId)
     {
         $this->issueId = $issueId;
-        $this->load($backend);
     }
 
-    private function load(BackendClient $backend): void
+    private function getIssue(BackendClient $backend): array
     {
         $response = $backend->get("/issues/{$this->issueId}");
         if (! $response->successful()) {
             $this->notFound = true;
-
-            return;
+            return [];
         }
-        $this->issue = $response->json();
+        
+        $this->notFound = false;
+        return $response->json();
+    }
 
+    private function getAvailableManuscripts(BackendClient $backend, array $issue): array
+    {
         $accepted = $backend->get('/manuscripts', ['status' => 'Accepted', 'per_page' => 25]);
         $manuscripts = $accepted->successful() ? ($accepted->json('data') ?? []) : [];
-        $alreadyIn = collect($this->issue['articles'] ?? [])->pluck('manuscript_id')->all();
-        $this->availableManuscripts = array_values(array_filter($manuscripts, fn ($m) => ! in_array($m['id'], $alreadyIn)));
+        $alreadyIn = collect($issue['articles'] ?? [])->pluck('manuscript_id')->all();
+        return array_values(array_filter($manuscripts, fn ($m) => ! in_array($m['id'], $alreadyIn)));
     }
 
     public function addArticle(BackendClient $backend)
     {
         $this->addError = '';
+        $this->addMessage = '';
         $this->validate([
             'manuscript_id' => 'required|integer',
             'page_start' => 'nullable|integer',
@@ -63,16 +65,12 @@ class ManageIssue extends Component
 
         if (! $response->successful()) {
             $this->addError = $response->json('message') ?? 'Could not add article.';
-
             return;
         }
 
         $this->manuscript_id = $this->page_start = $this->page_end = '';
         $this->addMessage = 'Article added.';
-        $this->load($backend);
     }
-
-    public string $removeError = '';
 
     public function removeArticle(int $articleId, BackendClient $backend)
     {
@@ -83,8 +81,6 @@ class ManageIssue extends Component
             $this->removeError = $response->json('message') ?? 'Could not remove article.';
             return;
         }
-
-        $this->load($backend);
     }
 
     public function publish(BackendClient $backend)
@@ -94,15 +90,18 @@ class ManageIssue extends Component
 
         if (! $response->successful()) {
             $this->publishError = $response->json('message') ?? 'Could not publish issue.';
-
             return;
         }
-
-        $this->load($backend);
     }
 
-    public function render()
+    public function render(BackendClient $backend)
     {
-        return view('livewire.production.manage-issue');
+        $issue = $this->getIssue($backend);
+        $availableManuscripts = $this->getAvailableManuscripts($backend, $issue);
+
+        return view('livewire.production.manage-issue', [
+            'issue' => $issue,
+            'availableManuscripts' => $availableManuscripts,
+        ]);
     }
 }
